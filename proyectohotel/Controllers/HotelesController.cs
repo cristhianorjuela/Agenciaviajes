@@ -231,41 +231,44 @@ namespace  proyectohotel.Controllers
         }
 
 
+        
         [HttpPost("{hotelId}/habitaciones/{habitacionId}/reservar")]
         public IActionResult ReservarHabitacion(int hotelId, int habitacionId, [FromBody] DatosReserva datosReserva)
         {
             var hotel = _context.Hoteles.Include(h => h.HabitacionesDisponibles).FirstOrDefault(h => h.Id == hotelId);
             if (hotel == null)
             {
-                return NotFound();
+              return NotFound();
             }
 
             var habitacion = hotel.HabitacionesDisponibles.FirstOrDefault(hab => hab.Id == habitacionId);
             if (habitacion == null || habitacion.NumeroDisponible <= 0)
             {
-                return NotFound("La habitación no está disponible.");
+                    return NotFound("La habitación no está disponible.");
             }
 
-             // Verificar si hay disponibilidad para las fechas y la cantidad de habitaciones
-            if (!VerificarDisponibilidad(hotel, habitacion, datosReserva.FechaEntrada, datosReserva.FechaSalida, datosReserva.NumeroHabitaciones))
+            // Verificar si hay disponibilidad para las fechas
+            if (!VerificarDisponibilidad(hotel, habitacion, datosReserva.FechaEntrada, datosReserva.FechaSalida))
             {
-                return BadRequest("La habitación no está disponible para las fechas o cantidad de habitaciones seleccionadas.");
+              return BadRequest("La habitación no está disponible para las fechas seleccionadas.");
             }
 
-            // Crear y guardar la reserva
-             var reserva = new Reserva
+             // Crear y guardar la reserva
+            var reserva = new Reserva
             {
                 FechaReserva = DateTime.Now,
                 NombresHuespedes = datosReserva.NombresHuespedes,
                 NumeroHabitaciones = datosReserva.NumeroHabitaciones,
-                HotelId = hotelId
+                HotelId = hotelId,
+                Pasajeros = datosReserva.Pasajeros, // Asignar datos de los pasajeros
+                ContactoEmergencia = datosReserva.ContactoEmergencia // Asignar datos del contacto de emergencia
             };
 
-             _context.Reservas.Add(reserva);
+            _context.Reservas.Add(reserva);
             habitacion.NumeroDisponible -= datosReserva.NumeroHabitaciones;
             _context.SaveChanges();
 
-            return Ok(reserva);
+          return Ok(reserva);
         }
 
            
