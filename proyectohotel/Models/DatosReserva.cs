@@ -11,17 +11,15 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace proyectohotel.Models
 {
-    public class Reserva
+
+
+    public class DatosReserva
     {
-        public int Id { get; set; }
-        public DateTime FechaReserva { get; set; }
+        public DateTime FechaEntrada { get; set; }
+        public DateTime FechaSalida { get; set; }
         public string NombresHuespedes { get; set; }
         public int NumeroHabitaciones { get; set; }
-        public int HotelId { get; set; }
-        public Hotel Hotel { get; set; }
         public List<Pasajero> Pasajeros { get; set; }
-         public ContactoEmergencia ContactoEmergencia { get; set; }
-
-        // Otras propiedades...
+        public ContactoEmergencia ContactoEmergencia { get; set; }
     }
 }
